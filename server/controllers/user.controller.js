@@ -114,4 +114,23 @@ const logout = async (req, res) => {
   }
 };
 
-export { signup, login, logout };
+const allUsers = async (req, res) => {
+  try {
+    const loggedInUser = req.user._id;
+    const filteredUsers = await userModel
+      .find({ _id: { $ne: loggedInUser } })
+      .select("-password -confirmPassword");
+    return res.status(200).json({
+      success: true,
+      filteredUsers,
+    });
+  } catch (error) {
+    console.log("Error in allUsers controller : " + error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server error while fetching user profile",
+    });
+  }
+};
+
+export { signup, login, logout, allUsers };

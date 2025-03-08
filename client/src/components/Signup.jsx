@@ -1,8 +1,12 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { useAuth } from "../context/AuthProvider";
+import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Signup = () => {
+  const [authUser, setAuthUser] = useAuth();
   const {
     register,
     handleSubmit,
@@ -18,7 +22,7 @@ const Signup = () => {
   };
 
   //   const onSubmit = (data) => console.log(data);
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const userInfo = {
       name: data.name,
       email: data.email,
@@ -27,19 +31,20 @@ const Signup = () => {
     };
     // console.log(userInfo);
 
-    axios
+    await axios
       .post(`http://localhost:4600/api/user/signup`, userInfo)
       .then((response) => {
         console.log(response.data);
         if (response.data) {
-          alert("Signup successful! You can now login.");
+          toast.success("Signup successful! You can now login.");
         }
 
         localStorage.setItem("messanger", JSON.stringify(response.data));
+        setAuthUser(response.data);
       })
       .catch((error) => {
         if (error.response) {
-          alert("Error : " + error.response.data.error);
+          toast.error("Error : " + error.response.data.message);
         }
         console.log(error);
       });
@@ -182,9 +187,12 @@ const Signup = () => {
             <div>
               <p className="text-center">
                 Have any Account?{" "}
-                <span className="text-blue-600 font-semibold underline cursor-pointer ml-1">
+                <Link
+                  to={"/login"}
+                  className="text-blue-600 font-semibold underline cursor-pointer ml-1"
+                >
                   Login
-                </span>
+                </Link>
               </p>
             </div>
           </div>

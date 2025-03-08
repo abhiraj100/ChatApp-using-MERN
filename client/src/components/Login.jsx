@@ -1,11 +1,49 @@
 import React from "react";
+import { useForm } from "react-hook-form";
+import axios from "axios";
+import { useAuth } from "../context/AuthProvider";
+import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Login = () => {
+  const [authUser, setAuthUser] = useAuth();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = async (data) => {
+    const userInfo = {
+      email: data.email,
+      password: data.password,
+    };
+    // console.log(userInfo);
+
+    await axios
+      .post(`http://localhost:4600/api/user/login`, userInfo)
+      .then((response) => {
+        console.log(response.data);
+        if (response.data) {
+          toast.success("Login successful!");
+        }
+
+        localStorage.setItem("messanger", JSON.stringify(response.data));
+        setAuthUser(response.data);
+      })
+      .catch((error) => {
+        if (error.response) {
+          toast.error("Error : " + error.response.data.message);
+        }
+        console.log(error);
+      });
+  };
   return (
     <>
       <div className="flex  h-screen items-center justify-center">
         <form
-          action=""
+          onSubmit={handleSubmit(onSubmit)}
           className="border border-blue-600 px-6 py-4 rounded-md space-y-1 w-80"
         >
           <h1 className="text-blue-600 text-center font-bold text-2xl">
@@ -30,8 +68,18 @@ const Login = () => {
                 <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
                 <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
               </svg>
-              <input type="text" className="grow" placeholder="Email" />
+              <input
+                type="text"
+                className="grow"
+                placeholder="Email"
+                {...register("email", { required: true })}
+              />
             </label>
+            {errors.email && (
+              <span className="text-red-600 text-sm font-semibold">
+                ** This field is required **
+              </span>
+            )}
 
             {/* Password */}
             <label className="input input-bordered flex items-center gap-2">
@@ -51,9 +99,14 @@ const Login = () => {
                 type="password"
                 className="grow"
                 placeholder="password"
-                value=""
+                {...register("password", { required: true })}
               />
             </label>
+            {errors.password && (
+              <span className="text-red-600 text-sm font-semibold">
+                ** This field is required **
+              </span>
+            )}
 
             {/* Text & Button */}
             <div className="flex justify-center">
@@ -62,13 +115,22 @@ const Login = () => {
                 value="Login"
                 className="text-white cursor-pointer bg-blue-600 w-full rounded-lg py-2 text-md font-semibold tracking-[1px]"
               />
+              {errors.exampleRequired && (
+                <span className="text-red-600 text-sm font-semibold">
+                  ** This field is required **
+                </span>
+              )}
             </div>
             <div>
               <p>
                 Don't have an Account?{" "}
-                <span className="text-blue-600 font-semibold underline cursor-pointer ml-1">
+                <Link
+                  to={"/signup"}
+                  className="text-blue-600 font-semibold underline cursor-pointer ml-1"
+                >
+                  {" "}
                   Signup
-                </span>
+                </Link>
               </p>
             </div>
           </div>
