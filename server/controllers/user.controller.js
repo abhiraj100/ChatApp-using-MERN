@@ -40,7 +40,11 @@ const signup = async (req, res) => {
       return res.status(201).json({
         success: true,
         message: "User registered successfully",
-        newUser,
+        user: {
+          _id: newUser._id,
+          name: newUser.name,
+          email: newUser.email,
+        },
       });
     }
   } catch (error) {
