@@ -32,7 +32,8 @@ const Signup = () => {
     // console.log(userInfo);
 
     await axios
-      .post(`http://localhost:4600/api/user/signup`, userInfo)
+      // .post(`http://localhost:4600/api/user/signup`, userInfo)
+      .post(`/api/user/signup`, userInfo)
       .then((response) => {
         console.log(response.data);
         if (response.data) {

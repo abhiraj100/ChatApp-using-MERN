@@ -6,6 +6,7 @@ import options from "./config/config.js";
 import connectDB from "./config/dbConnection.js";
 connectDB();
 import userRouter from "./routes/user.route.js";
+import messageRouter from "./routes/message.route.js";
 import cookieParser from "cookie-parser";
 
 // app config
@@ -19,11 +20,12 @@ app.use(cookieParser()); // The cookie-parser middleware helps extract and parse
 
 // API endpoints
 app.use("/api/user", userRouter);
+app.use("/api/message", messageRouter);
 
 // app.get("/", (req, res) => {
 //   res.send("Working Fine");
 // });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port : http://localhost${PORT}`);
+  console.log(`Server is running on port : http://localhost:${PORT}`);
 });
